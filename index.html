@@ -1,4 +1,24 @@
 <title>Guest Recovery Review</title>
+<meta name="description" content="Fillable root-cause and prevention review for 1-3 star guest reviews, covering the full meeting process from what happened through owner, next-guest, and OTA follow-through.">
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="favicon-512.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Gulf Coast Property Management">
+<meta property="og:title" content="Guest Recovery Review">
+<meta property="og:description" content="Root-cause and prevention review for 1-3 star guest reviews — from what happened through owner, next-guest, and OTA follow-through.">
+<meta property="og:image" content="https://psfin.github.io/gulfcoast-guest-review-form/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://psfin.github.io/gulfcoast-guest-review-form/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Guest Recovery Review">
+<meta name="twitter:description" content="Root-cause and prevention review for 1-3 star guest reviews.">
+<meta name="twitter:image" content="https://psfin.github.io/gulfcoast-guest-review-form/og-image.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -393,6 +413,40 @@
     margin-top: 22px;
   }
 
+  .toolbar-hint {
+    align-self: center;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    margin-right: auto;
+  }
+
+  /* Custom confirm dialog (replaces window.confirm, which some browsers/webviews block) */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(12,23,33,0.55);
+    display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal-card {
+    background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
+    max-width: 360px; width: 100%; padding: 20px 22px 18px; border: 1px solid var(--line-soft);
+  }
+  .modal-card h3 {
+    margin: 0 0 8px; font-size: 16px; color: var(--navy-800); font-family: "Barlow Semi Condensed", sans-serif;
+  }
+  .modal-card p { margin: 0 0 18px; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+  /* Toast feedback */
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(12px);
+    background: var(--navy-800); color: #fff; font-size: 13px; font-weight: 600;
+    font-family: "Barlow Semi Condensed", sans-serif; letter-spacing: 0.02em;
+    padding: 10px 18px; border-radius: 999px; box-shadow: var(--shadow);
+    opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
   @media (max-width: 720px) {
     .meta-grid { grid-template-columns: 1fr 1fr; }
     .cols-2, .cols-3 { grid-template-columns: 1fr; }
@@ -436,7 +490,8 @@
   </div>
 
   <div class="toolbar">
-    <button class="btn btn-ghost" type="button" onclick="if(confirm('Clear every field on this form?')) resetForm();">Clear form</button>
+    <span class="toolbar-hint">Print opens your browser's print dialog — choose "Save as PDF" as the destination.</span>
+    <button class="btn btn-ghost" type="button" onclick="openClearConfirm()">Clear form</button>
     <button class="btn btn-primary" type="button" onclick="window.print()">Print / Save as PDF</button>
   </div>
 
@@ -750,6 +805,19 @@
   <p class="foot-note">Gulf Coast Property Management &middot; Internal Use &middot; Fill in-browser, then <strong>Print / Save as PDF</strong> to file the completed review.</p>
 </div>
 
+<div class="modal-backdrop" id="clear-modal" role="dialog" aria-modal="true" aria-labelledby="clear-modal-title">
+  <div class="modal-card">
+    <h3 id="clear-modal-title">Clear this form?</h3>
+    <p>Every field, checkbox, and selection on this review will be reset. This can't be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" type="button" onclick="closeClearConfirm()">Cancel</button>
+      <button class="btn btn-primary" type="button" onclick="resetForm(); closeClearConfirm();">Clear form</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
   function buildRows(bodyId, cols, count) {
     const body = document.getElementById(bodyId);
@@ -787,5 +855,31 @@
     document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = "");
     document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => el.checked = false);
     document.querySelectorAll('tbody td select').forEach(el => el.selectedIndex = 0);
+    showToast("Form cleared");
+  }
+
+  // Custom confirm dialog — window.confirm() is silently blocked in some
+  // browsers, extensions, and embedded webviews (Slack/Teams in-app browsers,
+  // some corporate policies), so "Clear form" uses this instead.
+  function openClearConfirm() {
+    document.getElementById("clear-modal").classList.add("open");
+  }
+  function closeClearConfirm() {
+    document.getElementById("clear-modal").classList.remove("open");
+  }
+  document.getElementById("clear-modal").addEventListener("click", function (e) {
+    if (e.target === this) closeClearConfirm();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeClearConfirm();
+  });
+
+  let toastTimer;
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
   }
 </script>
