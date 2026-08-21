@@ -391,6 +391,54 @@
 
   .status-select { font-weight: 600; }
 
+  .add-row-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 10px;
+    padding: 6px 13px 6px 10px;
+    font-family: "Barlow Semi Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 0.03em;
+    color: var(--navy-800);
+    background: var(--navy-tint);
+    border: 1px dashed var(--navy-800);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.12s ease, transform 0.08s ease;
+  }
+  .add-row-btn:hover { background: var(--gold-tint); border-color: var(--gold-600); color: var(--gold-600); }
+  .add-row-btn:active { transform: translateY(1px); }
+  .add-row-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .add-row-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: currentColor;
+    color: inherit;
+    position: relative;
+  }
+  .add-row-icon::before {
+    content: "+";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--surface);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .add-row-btn .add-row-icon { font-size: 0; }
+
+  @media print {
+    .add-row-btn { display: none; }
+  }
+
   /* Status radio row (final status) */
   .status-row { display: flex; gap: 10px; flex-wrap: wrap; }
   .status-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
@@ -532,6 +580,9 @@
           <tbody id="timeline-body"></tbody>
         </table>
       </div>
+      <button class="add-row-btn" type="button" onclick="addRow('timeline')">
+        <span class="add-row-icon">+</span> Add row
+      </button>
       <div class="field-row cols-2" style="margin-top:16px;">
         <div class="yn" style="margin-bottom:0;">
           <span class="yn-q">Reported during stay?</span>
@@ -671,6 +722,9 @@
           <tbody id="actions-body"></tbody>
         </table>
       </div>
+      <button class="add-row-btn" type="button" onclick="addRow('actions')">
+        <span class="add-row-icon">+</span> Add row
+      </button>
     </div>
   </div>
 
@@ -819,37 +873,61 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  function buildRows(bodyId, cols, count) {
-    const body = document.getElementById(bodyId);
-    let html = "";
-    for (let r = 0; r < count; r++) {
-      html += "<tr>";
-      cols.forEach(col => {
-        if (col.type === "select") {
-          html += `<td><select>${col.options.map(o => `<option>${o}</option>`).join("")}</select></td>`;
-        } else {
-          html += `<td><input type="text" placeholder="${col.placeholder || ''}"></td>`;
-        }
-      });
-      html += "</tr>";
-    }
-    body.innerHTML = html;
+  // Table definitions — shared by the initial build and the "Add row" button.
+  const TABLES = {
+    timeline: {
+      bodyId: "timeline-body",
+      cols: [{ placeholder: "" }, { placeholder: "" }, { placeholder: "" }, { placeholder: "" }],
+      startRows: 5,
+    },
+    actions: {
+      bodyId: "actions-body",
+      cols: [
+        { placeholder: "" },
+        { placeholder: "" },
+        { placeholder: "" },
+        { placeholder: "" },
+        { type: "select", options: ["Status", "Not Started", "In Progress", "Done"] },
+        { type: "select", options: ["Type", "Coaching", "SOP Update", "Maintenance", "System", "Other"] },
+        { placeholder: "" },
+        { placeholder: "" },
+      ],
+      startRows: 5,
+    },
+  };
+
+  function rowHtml(cols) {
+    return (
+      "<tr>" +
+      cols
+        .map(col =>
+          col.type === "select"
+            ? `<td><select>${col.options.map(o => `<option>${o}</option>`).join("")}</select></td>`
+            : `<td><input type="text" placeholder="${col.placeholder || ""}"></td>`
+        )
+        .join("") +
+      "</tr>"
+    );
   }
 
-  buildRows("timeline-body", [
-    { placeholder: "" }, { placeholder: "" }, { placeholder: "" }, { placeholder: "" }
-  ], 5);
+  function buildRows(tableKey) {
+    const { bodyId, cols, startRows } = TABLES[tableKey];
+    const body = document.getElementById(bodyId);
+    body.innerHTML = Array.from({ length: startRows }, () => rowHtml(cols)).join("");
+  }
 
-  buildRows("actions-body", [
-    { placeholder: "" },
-    { placeholder: "" },
-    { placeholder: "" },
-    { placeholder: "" },
-    { type: "select", options: ["Status", "Not Started", "In Progress", "Done"] },
-    { type: "select", options: ["Type", "Coaching", "SOP Update", "Maintenance", "System", "Other"] },
-    { placeholder: "" },
-    { placeholder: "" }
-  ], 5);
+  function addRow(tableKey) {
+    const { bodyId, cols } = TABLES[tableKey];
+    const body = document.getElementById(bodyId);
+    body.insertAdjacentHTML("beforeend", rowHtml(cols));
+    const newRow = body.lastElementChild;
+    const firstField = newRow.querySelector("input, select");
+    if (firstField) firstField.focus();
+    newRow.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  buildRows("timeline");
+  buildRows("actions");
 
   function resetForm() {
     document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = "");
