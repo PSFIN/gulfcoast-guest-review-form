@@ -842,35 +842,59 @@
         <h2 class="section-title">Next Guest Impact</h2>
         <span class="section-kicker">Next guest</span>
       </div>
-      <p class="section-sub">Consider next guest implications. Is the next reservation OK to proceed? Actions required to make rent-ready? Block/relocation/cancellation required?</p>
+      <p class="section-sub">Consider next guest implications &mdash; has the next guest already checked in and, if not, is the reservation OK to proceed? Actions required to make rent-ready? Block/relocation/cancellation required?</p>
       <div class="yn">
-        <span class="yn-q">Is the next reservation in this unit ok to proceed?</span>
+        <span class="yn-q">Does the tape chart show next guest(s) already checked in?</span>
         <span class="yn-toggle">
-          <input type="radio" name="next-ok" id="next-ok-yes" value="Yes"><label for="next-ok-yes">Yes</label>
-          <input type="radio" name="next-ok" id="next-ok-no" value="No"><label for="next-ok-no">No</label>
+          <input type="radio" name="checked-in-gate" id="checked-in-yes" value="Yes" onchange="setReveal('checked-in-yes-block', true); setReveal('checked-in-no-block', false);"><label for="checked-in-yes">Yes</label>
+          <input type="radio" name="checked-in-gate" id="checked-in-no" value="No" onchange="setReveal('checked-in-yes-block', false); setReveal('checked-in-no-block', true);"><label for="checked-in-no">No</label>
         </span>
       </div>
-      <div class="yn">
-        <span class="yn-q">Are there actions required to make rent-ready before next guest?</span>
-        <span class="yn-toggle">
-          <input type="radio" name="rent-ready-required" id="rent-ready-yes" value="Yes" onchange="setReveal('rent-ready-detail', true)"><label for="rent-ready-yes">Yes</label>
-          <input type="radio" name="rent-ready-required" id="rent-ready-no" value="No" onchange="setReveal('rent-ready-detail', false)"><label for="rent-ready-no">No</label>
-        </span>
+
+      <div class="reveal-block" id="checked-in-yes-block" hidden style="margin-top:14px;">
+        <div class="yn">
+          <span class="yn-q">Is it necessary / have you already contacted the current in-house guest to discuss issues raised on this form?</span>
+          <span class="yn-toggle">
+            <input type="radio" name="contacted-guest" id="contacted-guest-yes" value="Yes"><label for="contacted-guest-yes">Yes</label>
+            <input type="radio" name="contacted-guest" id="contacted-guest-no" value="No"><label for="contacted-guest-no">No</label>
+          </span>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label for="contacted-guest-details">Please provide details</label>
+          <textarea id="contacted-guest-details"></textarea>
+        </div>
       </div>
-      <div class="field reveal-block" id="rent-ready-detail" hidden style="margin-bottom:14px;">
-        <label for="rent-ready">Please describe the actions required</label>
-        <textarea id="rent-ready"></textarea>
-      </div>
-      <div class="yn" style="margin-bottom:0;">
-        <span class="yn-q">Tape chart block, Relocation/Cancellation Required?</span>
-        <span class="yn-toggle">
-          <input type="radio" name="block-relocate" id="block-yes" value="Yes" onchange="setReveal('relocation-detail', true)"><label for="block-yes">Yes</label>
-          <input type="radio" name="block-relocate" id="block-no" value="No" onchange="setReveal('relocation-detail', false)"><label for="block-no">No</label>
-        </span>
-      </div>
-      <div class="field reveal-block" id="relocation-detail" hidden style="margin-top:14px; margin-bottom:0;">
-        <label for="relocation-details">Please provide details</label>
-        <textarea id="relocation-details" placeholder="Confirm the tape chart is updated and include the ticket # for the relocation/cancellation request"></textarea>
+
+      <div class="reveal-block" id="checked-in-no-block" hidden style="margin-top:14px;">
+        <div class="yn">
+          <span class="yn-q">Is the next reservation in this unit ok to proceed?</span>
+          <span class="yn-toggle">
+            <input type="radio" name="next-ok" id="next-ok-yes" value="Yes"><label for="next-ok-yes">Yes</label>
+            <input type="radio" name="next-ok" id="next-ok-no" value="No"><label for="next-ok-no">No</label>
+          </span>
+        </div>
+        <div class="yn">
+          <span class="yn-q">Are there actions required to make rent-ready before next guest?</span>
+          <span class="yn-toggle">
+            <input type="radio" name="rent-ready-required" id="rent-ready-yes" value="Yes" onchange="setReveal('rent-ready-detail', true)"><label for="rent-ready-yes">Yes</label>
+            <input type="radio" name="rent-ready-required" id="rent-ready-no" value="No" onchange="setReveal('rent-ready-detail', false)"><label for="rent-ready-no">No</label>
+          </span>
+        </div>
+        <div class="field reveal-block" id="rent-ready-detail" hidden style="margin-bottom:14px;">
+          <label for="rent-ready">Please describe the actions required</label>
+          <textarea id="rent-ready"></textarea>
+        </div>
+        <div class="yn" style="margin-bottom:0;">
+          <span class="yn-q">Tape chart block, Relocation/Cancellation Required?</span>
+          <span class="yn-toggle">
+            <input type="radio" name="block-relocate" id="block-yes" value="Yes" onchange="setReveal('relocation-detail', true)"><label for="block-yes">Yes</label>
+            <input type="radio" name="block-relocate" id="block-no" value="No" onchange="setReveal('relocation-detail', false)"><label for="block-no">No</label>
+          </span>
+        </div>
+        <div class="field reveal-block" id="relocation-detail" hidden style="margin-top:14px; margin-bottom:0;">
+          <label for="relocation-details">Please provide details</label>
+          <textarea id="relocation-details" placeholder="Confirm the tape chart is updated and include the ticket # for the relocation/cancellation request"></textarea>
+        </div>
       </div>
     </div>
   </div>
