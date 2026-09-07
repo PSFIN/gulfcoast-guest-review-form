@@ -607,19 +607,32 @@
           <option>1 Star</option><option>2 Star</option><option>3 Star</option><option>4 Star</option><option>5 Star</option>
         </select>
       </div>
+      <div class="meta-field"><label for="form-issued-date">Form Issued Date</label><input id="form-issued-date" type="date"></div>
+      <div class="meta-field"><label for="form-review-date">Form Review Date</label><input id="form-review-date" type="date"></div>
+
+      <div class="meta-field"><label for="arrival-date">Arrival Date</label><input id="arrival-date" type="date"></div>
+      <div class="meta-field"><label for="departure-date">Departure Date</label><input id="departure-date" type="date"></div>
       <div class="meta-field"><label for="platform">Platform</label>
         <select id="platform">
           <option value="">Select platform</option>
-          <option>Airbnb</option><option>Vrbo</option><option>Booking.com</option><option>Google</option>
-          <option>TripAdvisor</option><option>Direct / Owner Booking</option><option>Other</option>
+          <option>Airbnb Standard</option><option>Airbnb Super Host</option><option>Vrbo</option><option>Booking.com</option>
+          <option>Marriott</option><option>Direct</option><option>Google</option>
+          <option>Sandalfoot</option><option>Signal Inn</option><option>Colony Inn</option><option>GBB</option><option>YCBR</option>
+          <option>Other</option>
         </select>
       </div>
-      <div class="meta-field"><label for="arrival-date">Arrival Date</label><input id="arrival-date" type="date"></div>
-      <div class="meta-field"><label for="departure-date">Departure Date</label><input id="departure-date" type="date"></div>
       <div class="meta-field"><label for="review-posted-date">Review Posted Date</label><input id="review-posted-date" type="date"></div>
-      <div class="meta-field"><label for="form-issued-date">Form Issued Date</label><input id="form-issued-date" type="date"></div>
-      <div class="meta-field"><label for="form-review-date">Form Review Date</label><input id="form-review-date" type="date"></div>
-      <div class="meta-field"><label for="lead-owner">Lead Owner</label><input id="lead-owner" type="text" placeholder="Meeting lead"></div>
+      <div class="meta-field"><label for="lead-owner">Lead Owner</label>
+        <select id="lead-owner">
+          <option value="">Select lead owner</option>
+          <option>Norman Armstrong (Sandalfoot)</option>
+          <option>Nikolas Ventura (Signal Inn)</option>
+          <option>Marcie Allen (Colony Inn)</option>
+          <option>Lais Costa (Island Vacations)</option>
+          <option>Jessica Rushton (Gulf &amp; Bay)</option>
+          <option>Brittny Williams (Non Resort Portfolio)</option>
+        </select>
+      </div>
     </div>
   </div>
 
@@ -1154,6 +1167,7 @@
     document.querySelectorAll('select.status-select').forEach(el => el.classList.remove("status-completed", "status-ticket"));
     document.getElementById("rating").selectedIndex = 0;
     document.getElementById("platform").selectedIndex = 0;
+    document.getElementById("lead-owner").selectedIndex = 0;
     document.querySelectorAll('.reveal-block').forEach(el => el.hidden = true);
     document.querySelectorAll('textarea').forEach(el => el.style.height = "");
     buildComplaints(3);
