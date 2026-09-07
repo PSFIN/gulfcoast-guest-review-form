@@ -950,25 +950,27 @@
           <div class="yn" style="margin-bottom:0;">
             <span class="yn-q">Directly compensated?</span>
             <span class="yn-toggle">
-              <input type="radio" name="comp-yes-direct" id="comp-yes-direct-yes" value="Yes"><label for="comp-yes-direct-yes">Yes</label>
-              <input type="radio" name="comp-yes-direct" id="comp-yes-direct-no" value="No"><label for="comp-yes-direct-no">No</label>
+              <input type="radio" name="comp-yes-direct" id="comp-yes-direct-yes" value="Yes" onchange="updateCompAmountVisibility('yes')"><label for="comp-yes-direct-yes">Yes</label>
+              <input type="radio" name="comp-yes-direct" id="comp-yes-direct-no" value="No" onchange="updateCompAmountVisibility('yes')"><label for="comp-yes-direct-no">No</label>
             </span>
           </div>
           <div class="yn" style="margin-bottom:0;">
             <span class="yn-q">OTA compensated?</span>
             <span class="yn-toggle">
-              <input type="radio" name="comp-yes-ota" id="comp-yes-ota-yes" value="Yes"><label for="comp-yes-ota-yes">Yes</label>
-              <input type="radio" name="comp-yes-ota" id="comp-yes-ota-no" value="No"><label for="comp-yes-ota-no">No</label>
+              <input type="radio" name="comp-yes-ota" id="comp-yes-ota-yes" value="Yes" onchange="updateCompAmountVisibility('yes')"><label for="comp-yes-ota-yes">Yes</label>
+              <input type="radio" name="comp-yes-ota" id="comp-yes-ota-no" value="No" onchange="updateCompAmountVisibility('yes')"><label for="comp-yes-ota-no">No</label>
             </span>
           </div>
         </div>
-        <div class="field" style="margin-top:14px;">
-          <label for="comp-yes-amount">How much?</label>
-          <div class="input-prefix"><span>$</span><input type="text" id="comp-yes-amount" inputmode="decimal" placeholder="0.00"></div>
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label for="comp-yes-details">Please provide details of compensation</label>
-          <textarea id="comp-yes-details" placeholder="Include if refund, voucher, etc. — primary reason & justification for compensation"></textarea>
+        <div class="reveal-block" id="comp-yes-amount-block" hidden>
+          <div class="field" style="margin-top:14px;">
+            <label for="comp-yes-amount">How much?</label>
+            <div class="input-prefix"><span>$</span><input type="text" id="comp-yes-amount" inputmode="decimal" placeholder="0.00"></div>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="comp-yes-details">Please provide details of compensation</label>
+            <textarea id="comp-yes-details" placeholder="Include if refund, voucher, etc. — primary reason & justification for compensation"></textarea>
+          </div>
         </div>
       </div>
 
@@ -984,25 +986,27 @@
           <div class="yn" style="margin-bottom:0;">
             <span class="yn-q">Directly compensated?</span>
             <span class="yn-toggle">
-              <input type="radio" name="comp-no-direct" id="comp-no-direct-yes" value="Yes"><label for="comp-no-direct-yes">Yes</label>
-              <input type="radio" name="comp-no-direct" id="comp-no-direct-no" value="No"><label for="comp-no-direct-no">No</label>
+              <input type="radio" name="comp-no-direct" id="comp-no-direct-yes" value="Yes" onchange="updateCompAmountVisibility('no')"><label for="comp-no-direct-yes">Yes</label>
+              <input type="radio" name="comp-no-direct" id="comp-no-direct-no" value="No" onchange="updateCompAmountVisibility('no')"><label for="comp-no-direct-no">No</label>
             </span>
           </div>
           <div class="yn" style="margin-bottom:0;">
             <span class="yn-q">OTA compensated?</span>
             <span class="yn-toggle">
-              <input type="radio" name="comp-no-ota" id="comp-no-ota-yes" value="Yes"><label for="comp-no-ota-yes">Yes</label>
-              <input type="radio" name="comp-no-ota" id="comp-no-ota-no" value="No"><label for="comp-no-ota-no">No</label>
+              <input type="radio" name="comp-no-ota" id="comp-no-ota-yes" value="Yes" onchange="updateCompAmountVisibility('no')"><label for="comp-no-ota-yes">Yes</label>
+              <input type="radio" name="comp-no-ota" id="comp-no-ota-no" value="No" onchange="updateCompAmountVisibility('no')"><label for="comp-no-ota-no">No</label>
             </span>
           </div>
         </div>
-        <div class="field" style="margin-top:14px;">
-          <label for="comp-no-amount">How much?</label>
-          <div class="input-prefix"><span>$</span><input type="text" id="comp-no-amount" inputmode="decimal" placeholder="0.00"></div>
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label for="comp-no-details">Please provide details of compensation</label>
-          <textarea id="comp-no-details" placeholder="Include if refund, voucher, etc. — primary reason & justification for compensation"></textarea>
+        <div class="reveal-block" id="comp-no-amount-block" hidden>
+          <div class="field" style="margin-top:14px;">
+            <label for="comp-no-amount">How much?</label>
+            <div class="input-prefix"><span>$</span><input type="text" id="comp-no-amount" inputmode="decimal" placeholder="0.00"></div>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="comp-no-details">Please provide details of compensation</label>
+            <textarea id="comp-no-details" placeholder="Include if refund, voucher, etc. — primary reason & justification for compensation"></textarea>
+          </div>
         </div>
       </div>
     </div>
@@ -1140,6 +1144,15 @@
   function setReveal(id, show) {
     const el = document.getElementById(id);
     if (el) el.hidden = !show;
+  }
+
+  // Compensation amount/details only matter once compensation actually happened —
+  // show them if either Directly or OTA compensated is Yes, hide if both are No.
+  function updateCompAmountVisibility(branch) {
+    const direct = document.querySelector(`input[name="comp-${branch}-direct"]:checked`);
+    const ota = document.querySelector(`input[name="comp-${branch}-ota"]:checked`);
+    const show = (direct && direct.value === "Yes") || (ota && ota.value === "Yes");
+    setReveal(`comp-${branch}-amount-block`, show);
   }
 
   // Status dropdown in the Action table — colors green (Completed) / red (Ticket Raised).
