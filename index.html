@@ -978,10 +978,11 @@
         <div class="yn">
           <span class="yn-q">Do we recommend future compensation for this guest?</span>
           <span class="yn-toggle">
-            <input type="radio" name="comp-recommend" id="comp-recommend-yes" value="Yes"><label for="comp-recommend-yes">Yes</label>
-            <input type="radio" name="comp-recommend" id="comp-recommend-no" value="No"><label for="comp-recommend-no">No</label>
+            <input type="radio" name="comp-recommend" id="comp-recommend-yes" value="Yes" onchange="setReveal('comp-recommend-detail-block', true)"><label for="comp-recommend-yes">Yes</label>
+            <input type="radio" name="comp-recommend" id="comp-recommend-no" value="No" onchange="setReveal('comp-recommend-detail-block', false)"><label for="comp-recommend-no">No</label>
           </span>
         </div>
+        <div class="reveal-block" id="comp-recommend-detail-block" hidden>
         <div class="field-row cols-2">
           <div class="yn" style="margin-bottom:0;">
             <span class="yn-q">Directly compensated?</span>
@@ -1008,9 +1009,10 @@
             <textarea id="comp-no-details" placeholder="Include if refund, voucher, etc. — primary reason & justification for compensation"></textarea>
           </div>
         </div>
+        </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
   <!-- 10 :: FINAL INTERVENTION -->
   <div class="section">
